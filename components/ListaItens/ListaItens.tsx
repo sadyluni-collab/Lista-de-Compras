@@ -49,7 +49,7 @@ export default function ListaItens({
           <CircleDashed
             color={
               active === "presentes"
-                ? colors.azul500
+                ? colors.azul450
                 : colors.textSecondary
             }
           />
@@ -58,7 +58,7 @@ export default function ListaItens({
             style={{
               color:
                 active === "presentes"
-                  ? colors.azul500
+                  ? colors.azul450
                   : colors.textSecondary,
             }}
           >
@@ -73,7 +73,7 @@ export default function ListaItens({
           <CircleCheckBig
             color={
               active === "comprados"
-                ? colors.azul500
+                ? colors.azul360
                 : colors.textSecondary
             }
           />
@@ -82,7 +82,7 @@ export default function ListaItens({
             style={{
               color:
                 active === "comprados"
-                  ? colors.azul500
+                  ? colors.azul360
                   : colors.textSecondary,
             }}
           >
