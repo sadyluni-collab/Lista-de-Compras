@@ -1,67 +1,65 @@
-import { CircleCheckBig, CircleDashed } from "lucide-react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "./styles";
 import { useState } from "react";
-import { ProdutoItem } from "../../interfaces/ProdutoItem";
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { CircleCheckBig, CircleDashed } from "lucide-react";
+
+import { styles } from "./styles";
 import ProdutoListaItem from "../ProdutoListaItem/ProdutoListaItem";
 import { colors } from "../colors";
+import { ProdutoItem } from "../../interfaces/ProdutoItem";
 
-export const DATA: ProdutoItem[] = [
-  {
-    id: "1",
-    nome: "Arroz (5kg)",
-    comprado: true,
-  },
-  {
-    id: "2",
-    nome: "Feijão Preto (1kg)",
-    comprado: false,
-  },
-  {
-    id: "3",
-    nome: "Macarrão Espaguete",
-    comprado: true,
-  },
-  {
-    id: "4",
-    nome: "Óleo de Soja",
-    comprado: false,
-  },
-  {
-    id: "5",
-    nome: "Açúcar Refinado",
-    comprado: false,
-  },
-];
+interface Props {
+  produtos: ProdutoItem[];
+  onAlternar: (id: string) => void;
+  onRemover: (id: string) => void;
+  onLimpar: (comprados: boolean) => void;
+}
 
-export default function ListaItens() {
-  const [active, setActive] = useState("presentes");
+export default function ListaItens({
+  produtos,
+  onAlternar,
+  onRemover,
+  onLimpar,
+}: Props) {
+  const [active, setActive] = useState<
+    "presentes" | "comprados"
+  >("presentes");
 
-  // TODO(aluno): usar este estado para guardar a lista real de produtos (iniciando a partir de DATA ou de dados persistidos em AsyncStorage) e passar funções de adicionar/remover/alternar-comprado para Form e ProdutoListaItem.
-  const [produtos, setProdutos] = useState<ProdutoItem[]>([]);
+  const produtosFiltrados = produtos.filter((produto) =>
+    active === "presentes"
+      ? !produto.comprado
+      : produto.comprado
+  );
 
-  function alterarActiveParaPresentes() {
-    setActive("presentes");
-  }
-
-  function alterarActiveParaComprados() {
-    setActive("comprados");
+  function limpar() {
+    onLimpar(active === "comprados");
   }
 
   return (
     <View style={styles.container}>
-      {/* Filtro */}
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.buttonTopBar}
-          onPress={alterarActiveParaPresentes}
+          onPress={() => setActive("presentes")}
         >
           <CircleDashed
-            color={active === "presentes" ? colors.azul500 : colors.textSecondary}
+            color={
+              active === "presentes"
+                ? colors.azul500
+                : colors.textSecondary
+            }
           />
+
           <Text
             style={{
-              color: active === "presentes" ? colors.azul500 : colors.textSecondary,
+              color:
+                active === "presentes"
+                  ? colors.azul500
+                  : colors.textSecondary,
             }}
           >
             Presentes
@@ -70,14 +68,22 @@ export default function ListaItens() {
 
         <TouchableOpacity
           style={styles.buttonTopBar}
-          onPress={alterarActiveParaComprados}
+          onPress={() => setActive("comprados")}
         >
           <CircleCheckBig
-            color={active === "comprados" ? colors.azul500 : colors.textSecondary}
+            color={
+              active === "comprados"
+                ? colors.azul500
+                : colors.textSecondary
+            }
           />
+
           <Text
             style={{
-              color: active === "comprados" ? colors.azul500 : colors.textSecondary,
+              color:
+                active === "comprados"
+                  ? colors.azul500
+                  : colors.textSecondary,
             }}
           >
             Comprados
@@ -86,20 +92,25 @@ export default function ListaItens() {
 
         <TouchableOpacity
           style={{ marginLeft: "auto" }}
-          onPress={() => {}}
-          // TODO(aluno): implementar a ação de "Limpar" (ex.: remover os itens marcados como comprados, atualizando o estado da lista).
+          onPress={limpar}
         >
-          <Text style={{ color: colors.textSecondary }}>Limpar</Text>
+          <Text style={{ color: colors.textSecondary }}>
+            Limpar
+          </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lista de itens */}
-      {/* TODO(aluno): filtrar DATA/produtos de acordo com "active" (produto.comprado === false para "presentes", === true para "comprados") antes de passar para a FlatList. */}
       <FlatList<ProdutoItem>
-        data={DATA}
+        data={produtosFiltrados}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        renderItem={(linha) => <ProdutoListaItem produto={linha.item} />}
+        renderItem={({ item }) => (
+          <ProdutoListaItem
+            produto={item}
+            onAlternar={onAlternar}
+            onRemover={onRemover}
+          />
+        )}
       />
     </View>
   );
